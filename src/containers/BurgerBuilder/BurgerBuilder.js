@@ -1,9 +1,10 @@
-import React, { Component } from 'react';
-import Aux from '../../hoc/Aux'
+ import React, { Component } from 'react';
+import Aux from '../../hoc/Aux/Aux'
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls'
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary'
+import axios from '../../axios-orders'
 
 const INGREDIENT_PRICES = {
   salad: 0.5,
@@ -38,6 +39,26 @@ class BurgerBuilder extends Component {
 
   purchaseContinueHandler = () => {
 
+    const order = {
+      ingredients: this.state.ingredients,
+      price: this.state.totalPrice,
+      customer: {
+        name: 'Max Shwarz',
+        address: {
+           street: 'Test street 1',
+           zipCode: '233221',
+           country: 'Germany'
+        },
+        email: 'test@re.com'
+      },
+      deliveryMethod: 'fastest'
+
+    }
+      axios.post('https://burger-builder-b2c43.firebaseio.com/orders.json', order).then(response => {
+        console.log(response)
+      }).catch(error => {
+        console.log(error)
+      })
   }
 
   updatePurchaseState (ingredients) {
@@ -101,7 +122,7 @@ class BurgerBuilder extends Component {
             <OrderSummary
               ingredients={this.state.ingredients}
               purchaseCanceled={this.purchaseCancelHandler}
-              purchaseContinued={this.purchaseContinued}
+              purchaseContinued={this.purchaseContinueHandler}
               price={this.state.totalPrice.toFixed(2)}
              />
           </Modal>
