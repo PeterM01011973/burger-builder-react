@@ -112,7 +112,7 @@ class ContactData extends Component {
          price: this.props.price ,
          orderData: fromData
        }
-       this.props.onBurgerBuilder(order)
+       this.props.onBurgerBuilder(order, this.props.token)
     }
 
     checkValidity(value, rules ){
@@ -129,9 +129,19 @@ class ContactData extends Component {
             isValid = value.length >= rules.minLength && isValid
         }
 
-         if (rules.maxLength) {
+        if (rules.maxLength) {
              isValid = value.length <= rules.minLength && isValid
-         }
+        }
+
+        if (rules.isEmail) {
+            const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+            isValid = pattern.test(value) && isValid
+        }
+
+        if (rules.isNumeric) {
+            const pattern = /^\d+$/;
+            isValid = pattern.test(value) && isValid
+        }
         return isValid;
     }
     inputChangedHandler = (event, inputIdentifier) => {
@@ -150,7 +160,6 @@ class ContactData extends Component {
         for(let inputIdentifier in updatedOrderForm){
             formIsValid = updatedOrderForm[inputIdentifier].valid && formIsValid
         }
-        console.log(formIsValid)
         this.setState({
             orderForm: updatedOrderForm,
             formIsValid: formIsValid
@@ -197,13 +206,14 @@ const mapStateToProps = state => {
     return {
         ings: state.burgerBuilder.ingredients,
         price: state.burgerBuilder.totalPrice,
-        loading: state.order.loading
+        loading: state.order.loading,
+        token: state.auth.token
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        onBurgerBuilder: (orderData) => dispatch(actions.purchaseBurger(orderData))
+        onBurgerBuilder: (orderData, token) => dispatch(actions.purchaseBurger(orderData, token))
     }   
 }
 export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(ContactData, axios));
