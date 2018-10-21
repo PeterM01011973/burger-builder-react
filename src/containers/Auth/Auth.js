@@ -14,7 +14,7 @@ class Auth extends Component {
     state = {
         controls: {
              email: {
-                 elementType: 'i nput',
+                 elementType: 'input',
                  elementConfig: {
                      type: 'email',
                      placeholder: 'Mail address'
